@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using System;
 
 namespace Sample.RabbitMQ.MySql
 {
@@ -10,9 +12,16 @@ namespace Sample.RabbitMQ.MySql
             BuildWebHost(args).Run();
         }
 
-        public static IWebHost BuildWebHost(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>() 
+        public static IWebHost BuildWebHost(string[] args)
+        {
+            var configuration = new ConfigurationBuilder().SetBasePath(Environment.CurrentDirectory)
+                                          .AddJsonFile("host.json")
+                                          .Build();
+            return WebHost.CreateDefaultBuilder(args)
+                .UseConfiguration(configuration)
+                .UseShutdownTimeout(TimeSpan.FromSeconds(10))
+                .UseStartup<Startup>()
                 .Build();
+        }
     }
 }

@@ -16,7 +16,7 @@ namespace DotNetCore.CAP.NodeDiscovery
             _discoveryProviderFactory = discoveryProviderFactory;
         }
 
-        public void Start()
+        public void Start(bool reload = false)
         {
             var discoveryProvider = _discoveryProviderFactory.Create(_dashboardOptions);
 

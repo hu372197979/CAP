@@ -112,5 +112,79 @@ VALUES(@Id,'{_capOptions.Version}',@Name,@Group,@Content,@Retries,@Added,@Expire
                 return connection.Execute(sql) > 0;
             }
         }
+
+
+        /// <summary>
+        /// 添加或修改网络消息处理
+        /// </summary>
+        /// <param name="message">消息内容</param>
+        /// <returns></returns>
+        public bool AddOrEditWebMessage(CapWebMessage message)
+        {
+            if (message.Id > 0)
+            {
+                if (message.Id.ToString() != message.IdString)
+                {
+                    message.Id = Convert.ToInt64(message.IdString);
+                }
+                var sql =
+                $"UPDATE `{_prefix}.webmessage` " +
+                $"SET `Name`=@Name," +
+                $"`Group`=@Group," +
+                $"`Content`=@Content," +
+                $"`Url`=@Url," +
+                $"`Method`=@Method," +
+                $"`Headers`=@Headers," +
+                $"`Edited`=@Edited" +
+                $" WHERE `Id`=@Id";
+                using (var connection = new MySqlConnection(Options.ConnectionString))
+                {
+                    return connection.Execute(sql, message) > 0;
+                }
+            }
+            else
+            {
+                message.Id = SnowflakeId.Default().NextId();
+                var sql = $@"
+INSERT INTO `{_prefix}.webmessage`(`Id`,`Version`,`Name`,`Group`,`Content`,`Url`,`Method`,`Headers`,`Added`,`Edited`)
+VALUES(@Id,'{_capOptions.Version}',@Name,@Group,@Content,@Url,@Method,@Headers,@Added,@Edited);";
+
+                using (var connection = new MySqlConnection(Options.ConnectionString))
+                {
+                    return connection.Execute(sql, message) > 0;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 删除web消息配置
+        /// </summary>
+        /// <param name="Id">配置编号</param>
+        /// <returns></returns>
+        public bool DeleteWebMessage(long Id)
+        {
+            var sql =$"DELETE FROM `{_prefix}.webmessage` WHERE `Id`={Id}";
+            using (var connection = new MySqlConnection(Options.ConnectionString))
+            {
+                return connection.Execute(sql) > 0;
+            }
+        }
+
+        /// <summary>
+        /// 获取当前所有web消息处理配置
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IEnumerable<CapWebMessage>> GetWebMessages(long Id = 0)
+        {
+            var sql = $"SELECT * FROM `{_prefix}.webmessage`;";
+            if (Id > 0)
+            {
+                sql = $"SELECT * FROM `{_prefix}.webmessage` WHERE Id = {Id};";
+            }
+            using (var connection = new MySqlConnection(Options.ConnectionString))
+            {
+                return await connection.QueryAsync<CapWebMessage>(sql);
+            }
+        }
     }
 }

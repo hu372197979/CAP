@@ -12,6 +12,12 @@
     <ProjectReference Include="..\..\src\DotNetCore.CAP.MySql\DotNetCore.CAP.MySql.csproj" />
     <ProjectReference Include="..\..\src\DotNetCore.CAP.RabbitMQ\DotNetCore.CAP.RabbitMQ.csproj" />
     <ProjectReference Include="..\..\src\DotNetCore.CAP\DotNetCore.CAP.csproj" />
-  </ItemGroup>
+  </ItemGroup> 
+  <ItemGroup>
+    <Content Update="host.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup> 
+  <ProjectExtensions><VisualStudio><UserProperties host_1json__JSONSchema="http://json.schemastore.org/docfx" /></VisualStudio></ProjectExtensions>
 
 </Project>

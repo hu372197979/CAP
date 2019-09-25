@@ -26,6 +26,19 @@ namespace DotNetCore.CAP.Dashboard
                     : null
             });
 
+        public static readonly DashboardMetric WebMessageCount = new DashboardMetric(
+           "webmessage:count",
+           "Metrics_WebMessages",
+           page => new Metric(page.Statistics.WebMessageCount.ToString("N0"))
+           {
+               Style = page.Statistics.WebMessageCount == 0 ? MetricStyle.Warning : MetricStyle.Default,
+               Highlighted = page.Statistics.WebMessageCount == 0,
+               Title = page.Statistics.WebMessageCount == 0
+                   ? "No web message found."
+                   : null
+           });
+
+
         public static readonly DashboardMetric SubscriberCount = new DashboardMetric(
             "retries:count",
             "Metrics_Retries",
@@ -106,6 +119,8 @@ namespace DotNetCore.CAP.Dashboard
                 Highlighted = page.Statistics.ReceivedFailed > 0
             });
 
+
+
         static DashboardMetrics()
         {
             AddMetric(ServerCount);
@@ -119,6 +134,8 @@ namespace DotNetCore.CAP.Dashboard
 
             AddMetric(PublishedFailedCount);
             AddMetric(ReceivedFailedCount);
+
+            AddMetric(WebMessageCount);
         }
 
         public static void AddMetric(DashboardMetric metric)

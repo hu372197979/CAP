@@ -22,6 +22,7 @@ namespace DotNetCore.CAP
     {
         private readonly CapOptions _capOptions;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IStorage _storage;
 
         /// <summary>
         /// since this class be designed as a Singleton service,the following two list must be thread safe!
@@ -36,6 +37,7 @@ namespace DotNetCore.CAP
         {
             _serviceProvider = serviceProvider;
             _capOptions = serviceProvider.GetService<IOptions<CapOptions>>().Value;
+            _storage = serviceProvider.GetService<IStorage>();
 
             _asteriskList = new ConcurrentDictionary<string, List<RegexExecuteDescriptor<ConsumerExecutorDescriptor>>>();
             _poundList = new ConcurrentDictionary<string, List<RegexExecuteDescriptor<ConsumerExecutorDescriptor>>>();
@@ -48,6 +50,9 @@ namespace DotNetCore.CAP
             executorDescriptorList.AddRange(FindConsumersFromInterfaceTypes(_serviceProvider));
 
             executorDescriptorList.AddRange(FindConsumersFromControllerTypes());
+
+            //加载通过配置增加的消费订阅
+            executorDescriptorList.AddRange(FindWebMessageFromDB());
 
             return executorDescriptorList;
         }
@@ -110,6 +115,28 @@ namespace DotNetCore.CAP
 
             return executorDescriptorList;
         }
+
+        /// <summary>
+        /// 从存储位置获取所有网络消费接口
+        /// </summary>
+        /// <returns></returns>
+        protected virtual IEnumerable<ConsumerExecutorDescriptor> FindWebMessageFromDB()
+        {
+            var ret = new List<ConsumerExecutorDescriptor>();
+            var webMessages = _storage.GetConnection().GetWebMessages().GetAwaiter().GetResult();
+            foreach (var item in webMessages)
+            {
+                ret.Add(new ConsumerExecutorDescriptor()
+                {
+                    Attribute = new CapSubscribeAttribute(item.Name) { Group = item.Group },
+                    ImplTypeInfo = typeof(Internal.HttpHelper).GetTypeInfo(),
+                    MethodInfo = typeof(Internal.HttpHelper).GetTypeInfo().DeclaredMethods.FirstOrDefault(x => x.IsPublic & x.Name == "SendAsync"),
+                    ServiceTypeInfo = typeof(Internal.HttpHelper).GetTypeInfo()
+                });
+            }
+            return ret;
+        }
+
 
         protected IEnumerable<ConsumerExecutorDescriptor> GetTopicAttributesDescription(TypeInfo typeInfo, TypeInfo serviceTypeInfo = null)
         {

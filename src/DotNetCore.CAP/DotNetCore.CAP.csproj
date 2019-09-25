@@ -44,6 +44,16 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
+    <Compile Update="Dashboard\Pages\WebMessage*.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>WebMessage.cshtml</DependentUpon>
+    </Compile>
+    <Compile Update="Dashboard\Pages\WebMessage.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>WebMessage.cshtml</DependentUpon>
+    </Compile>
     <Compile Update="Dashboard\Pages\_SidebarMenu.generated.cs">
       <DependentUpon>_SidebarMenu.cshtml</DependentUpon>
     </Compile>
@@ -120,5 +130,11 @@
       <CustomToolNamespace>DotNetCore.CAP.Dashboard.Resources</CustomToolNamespace>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Dashboard\Pages\WebMessage.cshtml">
+      <Generator>RazorGenerator</Generator>
+      <LastGenOutput>WebMessage.generated.cs</LastGenOutput>
+    </None>
   </ItemGroup>
 </Project>

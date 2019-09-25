@@ -24,12 +24,14 @@ namespace DotNetCore.CAP
         private readonly TimeSpan _pollingDelay = TimeSpan.FromSeconds(1);
         private readonly CapOptions _options;
         private readonly MethodMatcherCache _selector;
-        private readonly CancellationTokenSource _cts;
+        private CancellationTokenSource _cts;
 
         private string _serverAddress;
         private Task _compositeTask;
         private bool _disposed;
         private static bool _isHealthy = true;
+
+        private System.Collections.Generic.List<Task> _consumerList = new System.Collections.Generic.List<Task>();
 
         // diagnostics listener
         // ReSharper disable once InconsistentNaming
@@ -58,43 +60,51 @@ namespace DotNetCore.CAP
             return _isHealthy;
         }
 
-        public void Start()
+        public void Start(bool reload =false)
         {
-            var groupingMatches = _selector.GetCandidatesMethodsOfGroupNameGrouped();
+            var groupingMatches = _selector.GetCandidatesMethodsOfGroupNameGrouped(reload);
+            if (reload)
+            {
+                _cts = new CancellationTokenSource();
+            }
 
             foreach (var matchGroup in groupingMatches)
             {
                 for (int i = 0; i < _options.ConsumerThreadCount; i++)
                 {
-                    Task.Factory.StartNew(() =>
-                    {
-                        try
-                        {
-                            using (var client = _consumerClientFactory.Create(matchGroup.Key))
-                            {
-                                _serverAddress = client.ServersAddress;
+                   _consumerList.Add(Task.Factory.StartNew(() =>
+                   {
+                       try
+                       {
+                           using (var client = _consumerClientFactory.Create(matchGroup.Key))
+                           {
+                               _serverAddress = client.ServersAddress;
 
-                                RegisterMessageProcessor(client);
+                               RegisterMessageProcessor(client);
 
-                                client.Subscribe(matchGroup.Value.Select(x => x.Attribute.Name));
+                               client.Subscribe(matchGroup.Value.Select(x => x.Attribute.Name));
 
-                                client.Listening(_pollingDelay, _cts.Token);
-                            }
-                        }
-                        catch (OperationCanceledException)
-                        {
-                            //ignore
-                        }
-                        catch (BrokerConnectionException e)
-                        {
-                            _isHealthy = false;
-                            _logger.LogError(e, e.Message);
-                        }
-                        catch (Exception e)
-                        {
-                            _logger.LogError(e, e.Message);
-                        }
-                    }, _cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+                               client.Listening(_pollingDelay, _cts.Token);
+                           }
+                       }
+                       catch (OperationCanceledException)
+                       {
+                           //ignore
+                       }
+                       catch (BrokerConnectionException e)
+                       {
+                           _isHealthy = false;
+                           _logger.LogError(e, e.Message);
+                       }
+                       catch (Exception e)
+                       {
+                           _logger.LogError(e, e.Message);
+                       }
+                       finally
+                       {
+                           _logger.LogWarning("监听退出！！");
+                       }
+                   }, _cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default));
                 }
             }
             _compositeTask = Task.CompletedTask;
@@ -105,10 +115,8 @@ namespace DotNetCore.CAP
             if (!IsHealthy() || force)
             {
                 Pulse();
-
                 _isHealthy = true;
-
-                Start();
+                Start(true);
             }
         }
 
@@ -118,13 +126,10 @@ namespace DotNetCore.CAP
             {
                 return;
             }
-
             _disposed = true;
-
             try
             {
                 Pulse();
-
                 _compositeTask?.Wait(TimeSpan.FromSeconds(2));
             }
             catch (AggregateException ex)
@@ -140,6 +145,11 @@ namespace DotNetCore.CAP
         public void Pulse()
         {
             _cts?.Cancel();
+            if (_consumerList.Any())
+            {
+                Task.WaitAll(_consumerList.ToArray());
+                _consumerList.Clear();
+            }
         }
 
         private void RegisterMessageProcessor(IConsumerClient client)

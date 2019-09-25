@@ -24,8 +24,13 @@ namespace DotNetCore.CAP.Internal
         /// Get a dictionary of candidates.In the dictionary,
         /// the Key is the CAPSubscribeAttribute Group, the Value for the current Group of candidates
         /// </summary>
-        public ConcurrentDictionary<string, IReadOnlyList<ConsumerExecutorDescriptor>> GetCandidatesMethodsOfGroupNameGrouped()
+        public ConcurrentDictionary<string, IReadOnlyList<ConsumerExecutorDescriptor>> GetCandidatesMethodsOfGroupNameGrouped(bool reload=false)
         {
+            if (reload)
+            {
+                Entries.Clear();
+            }
+
             if (Entries.Count != 0)
             {
                 return Entries;

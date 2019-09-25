@@ -13,6 +13,6 @@ namespace DotNetCore.CAP
     {
         void Pulse();
 
-        void Start();
+        void Start(bool reload = false);
     }
 }

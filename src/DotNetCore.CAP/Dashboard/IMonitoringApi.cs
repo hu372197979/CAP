@@ -22,6 +22,12 @@ namespace DotNetCore.CAP.Dashboard
 
         int ReceivedSucceededCount();
 
+        /// <summary>
+        /// 获取网络消息处理数量
+        /// </summary>
+        /// <returns></returns>
+        int WebMessageCount();
+
         IDictionary<DateTime, int> HourlySucceededJobs(MessageType type);
 
         IDictionary<DateTime, int> HourlyFailedJobs(MessageType type);

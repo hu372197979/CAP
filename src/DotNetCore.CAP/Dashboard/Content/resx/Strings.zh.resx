@@ -348,4 +348,46 @@
   <data name="Common_NotAvailable" xml:space="preserve">
     <value>N/A</value>
   </data>
+  <data name="WebMessage_Manage" xml:space="preserve">
+    <value>网络消息管理</value>
+  </data>
+  <data name="Common_ApiUrl" xml:space="preserve">
+    <value>接口地址</value>
+  </data>
+  <data name="Common_Edit" xml:space="preserve">
+    <value>修改</value>
+  </data>
+  <data name="Common_Opt" xml:space="preserve">
+    <value>操作</value>
+  </data>
+  <data name="WebMessage_NoData" xml:space="preserve">
+    <value>没有配置CAP网络消息处理</value>
+  </data>
+  <data name="Common_Start" xml:space="preserve">
+    <value>立即执行</value>
+  </data>
+  <data name="WebMessage_Save" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="WebMessage_Add" xml:space="preserve">
+    <value>新增配置</value>
+  </data>
+  <data name="WebMessage_Edit_Content" xml:space="preserve">
+    <value>消息消费请求内容</value>
+  </data>
+  <data name="WebMessage_Edit_Group" xml:space="preserve">
+    <value>消息分组</value>
+  </data>
+  <data name="WebMessage_Edit_Headers" xml:space="preserve">
+    <value>消息消费请求头信息</value>
+  </data>
+  <data name="WebMessage_Edit_Method" xml:space="preserve">
+    <value>消息消费请求方式</value>
+  </data>
+  <data name="WebMessage_Edit_Name" xml:space="preserve">
+    <value>消息名称</value>
+  </data>
+  <data name="WebMessage_Edit_Url" xml:space="preserve">
+    <value>消息消费地址</value>
+  </data>
 </root>

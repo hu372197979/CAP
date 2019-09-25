@@ -1,0 +1,118 @@
+﻿@* Generator: Template TypeVisibility: internal GeneratePrettyNames: True *@
+@using DotNetCore.CAP.Dashboard.Pages
+@using DotNetCore.CAP.Dashboard.Resources
+@inherits DotNetCore.CAP.Dashboard.RazorPage
+@{
+    Layout = new LayoutPage(Strings.WebMessage_Manage);
+}
+<div class="row">
+    <div class="col-md-12">
+        <h1 class="page-header">@Strings.WebMessage_Manage</h1>
+        <div class="btn-toolbar btn-toolbar-top">
+            <button class="btn btn-sm btn-primary webMessageModal"
+                    data-current="{}"
+                    data-url="@Url.To("/webmessage/save")"
+                    data-loading-text="@(Strings.WebMessage_Add)...">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Strings.WebMessage_Add
+            </button>
+        </div>
+
+        @if (WebMessages.Count() == 0)
+        {
+            <div class="alert alert-warning">
+                @Strings.WebMessage_NoData
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table subscribe-table">
+                    <thead>
+                        <tr>
+                            <th width="20%">@Strings.Common_Group</th>
+                            <th width="30%">@Strings.Common_Name</th>
+                            <th>@Strings.Common_ApiUrl</th>
+                            <th>@Strings.Common_Opt</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach (var message in WebMessages)
+                        {
+                            <tr>
+                                <td>@message.Group</td>
+                                <td>@message.Name</td>
+                                <td>@message.Url</td>
+                                <td>
+                                    <button class="js-webmessage-command btn btn-sm btn-success" data-url="@(Url.To("/webmessage/run/") + message.Id)" data-loading-text="@(Strings.Common_Start)...">
+                                        <span class="glyphicon glyphicon-play-circle"></span> @Strings.Common_Start
+                                    </button>
+                                    <button class="btn btn-sm btn-primary webMessageModal" data-current="@message.ToJsonString()" data-url="@Url.To("/webmessage/save")">
+                                        <span class="glyphicon glyphicon-cog"></span> @Strings.Common_Edit
+                                    </button>
+                                    <button class="js-webmessage-command btn btn-sm btn-primary" data-url="@(Url.To("/webmessage/delete/") + message.Id)" data-loading-text="@(Strings.Common_Delete)...">
+                                        <span class="glyphicon glyphicon-trash"></span> @Strings.Common_Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+        <div>
+            <div class="modal fade" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title">Web Message</h4>
+                        </div>
+                        <div id="jsonContent" style="max-height: 500px; overflow-y: auto;" class="modal-body">
+                            <form class="row">
+                                <div class="col-md-12 form-group">
+                                    <input type="text" class="form-control" name="group" placeholder="@Strings.WebMessage_Edit_Group" />
+                                </div>
+                                <div class="col-md-12 form-group">
+                                    <input type="text" class="form-control" name="name" placeholder="@Strings.WebMessage_Edit_Name" />
+                                </div>
+
+                                <div class="col-md-12 form-group">
+                                    <input type="text" class="form-control" name="url" placeholder="@Strings.WebMessage_Edit_Url" />
+                                </div>
+                                <div class="col-md-12 form-group">
+                                    <select id="webmessage_method" class="form-control">
+                                        <option value="GET" selected="">GET</option>
+                                        <option value="POST">POST</option>
+                                        <option value="PUT">PUT</option>
+                                        <option value="PATCH">PATCH</option>
+                                        <option value="DELETE">DELETE</option>
+                                        <option value="COPY">COPY</option>
+                                        <option value="HEAD">HEAD</option>
+                                        <option value="OPTIONS">OPTIONS</option>
+                                        <option value="LINK">LINK</option>
+                                        <option value="UNLINK">UNLINK</option>
+                                        <option value="PURGE">PURGE</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-12 form-group">
+                                    <textarea class="form-control" id="webmessage_headers" rows="3" placeholder="@Strings.WebMessage_Edit_Headers"></textarea>
+                                </div>
+                                <div class="col-md-12 form-group">
+                                    <textarea class="form-control" id="webmessage_content" rows="3" placeholder="@Strings.WebMessage_Edit_Content"></textarea>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-sm btn-primary" id="webMessageSaveBtn">@Strings.WebMessage_Save</button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+        </div>
+    </div>
+</div>

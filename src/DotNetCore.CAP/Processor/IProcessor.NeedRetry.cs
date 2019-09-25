@@ -67,7 +67,7 @@ namespace DotNetCore.CAP.Processor
 
             foreach (var message in messages)
             {
-                await _subscriberExecutor.ExecuteAsync(message);
+                await _subscriberExecutor.ExecuteAsync(message,default(System.Threading.CancellationToken));
 
                 await context.WaitAsync(_delay);
             }

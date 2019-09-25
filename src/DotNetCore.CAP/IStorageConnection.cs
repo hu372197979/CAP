@@ -62,5 +62,25 @@ namespace DotNetCore.CAP
         /// <param name="messageId">Message id</param>
         /// <param name="state">State name</param>
         bool ChangeReceivedState(long messageId, string state);
+
+
+        /// <summary>
+        /// 获取所有web消息列表
+        /// </summary>
+        /// <returns></returns>
+        Task<IEnumerable<CapWebMessage>> GetWebMessages(long Id = 0);
+
+        /// <summary>
+        /// 添加或修改接口消息处理
+        /// </summary>
+        /// <returns></returns>
+        bool AddOrEditWebMessage(CapWebMessage message);
+
+        /// <summary>
+        /// 删除接口消息处理
+        /// </summary>
+        /// <returns></returns>
+        bool DeleteWebMessage(long Id);
+
     }
 }

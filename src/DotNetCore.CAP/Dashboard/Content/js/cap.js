@@ -649,6 +649,56 @@ $(function() {
 
 })();
 
+
+(function () {
+
+    var currentData = null;
+    var url = null;
+    $(".webMessageModal").click(function () {
+        url = $(this).data("url");
+        currentData = $(this).data("current");
+        $("input[name='name']").val(currentData.Name);
+        $("input[name='group']").val(currentData.Group);
+        $("#webmessage_content").val(currentData.Content);
+        $("input[name='url']").val(currentData.Url);
+        $("#webmessage_method").val(currentData.Method || "GET");
+        $("#webmessage_headers").val(currentData.Headers);
+        $(".modal").modal("show");
+
+    });
+
+    $("#webMessageSaveBtn").click(function () {
+        currentData.Name = $("input[name='name']").val();
+        currentData.Group = $("input[name='group']").val();
+        currentData.Content = $("#webmessage_content").val();
+        currentData.Url = $("input[name='url']").val();
+        currentData.Method = $("#webmessage_method").val();
+        currentData.Headers = $("#webmessage_headers").val();
+        $.ajax({
+            url: url,
+            dataType: "json",
+            method: "POST",
+            data: "webmessage="+JSON.stringify(currentData),
+            success: function (data) {
+                $(".modal").modal("hide");
+                window.location.reload();
+            }
+        });
+    });
+
+    $(".js-webmessage-command").click(function () {
+        $.ajax({
+            url: $(this).data("url"),
+            method: "POST",
+            success: function (data) {
+                window.location.reload();
+            }
+        });
+    });
+
+})();
+
+
 function nodeSwitch(id) {
     console.log(`id:${id}`);
     document.cookie = `cap.node=${escape(id)};`;

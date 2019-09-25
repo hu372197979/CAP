@@ -4,6 +4,7 @@
 using System.Reflection;
 using DotNetCore.CAP.Dashboard.Pages;
 using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
 
 namespace DotNetCore.CAP.Dashboard
 {
@@ -125,7 +126,45 @@ namespace DotNetCore.CAP.Dashboard
 
             Routes.AddRazorPage("/nodes/node/(?<Id>.+)", x => new NodePage(x.Groups["Id"].Value));
 
+            Routes.AddRazorPage("/webmessage", x => new WebMessage());
+
+
+            Routes.AddJsonResult("/webmessage/save", x =>
+            {
+                var message = x.Storage.GetConnection().AddOrEditWebMessage(
+                    Newtonsoft.Json.JsonConvert.DeserializeObject<Models.CapWebMessage>(x
+                    .Request.GetFormValuesAsync("webmessage").GetAwaiter().GetResult()[0]));
+                x.RequestServices.GetService<IConsumerRegister>().ReStart(true);
+                return message;
+            });
+            Routes.AddJsonResult("/webmessage/delete/(?<Id>.+)", x =>
+            {
+                var id = long.Parse(x.UriMatch.Groups["Id"].Value);
+                var message = x.Storage.GetConnection().DeleteWebMessage(id);
+                x.RequestServices.GetService<IConsumerRegister>().ReStart(true);
+                return message;
+            });
+
+            Routes.AddCommand("/webmessage/run/(?<Id>.+)", x =>
+            {
+                var id = long.Parse(x.UriMatch.Groups["Id"].Value);
+                var msg = x.Storage.GetConnection().GetWebMessages(id).GetAwaiter().GetResult();
+                foreach (var item in msg)
+                {
+                    x.RequestServices.GetService<ICapPublisher>().Publish(item.Name, item.Content);
+                }
+                return true;
+            });
+
             #endregion Razor pages and commands
+
+            Routes.AddJsonResult("/api/v1/webmessage", x =>
+            {
+                var name = x.Request.GetFormValuesAsync("name").GetAwaiter().GetResult().FirstOrDefault();
+                var message = x.Request.GetFormValuesAsync("message").GetAwaiter().GetResult().FirstOrDefault();
+                x.RequestServices.GetService<ICapPublisher>().Publish(name, message);
+                return new { status = 200, message = "处理成功！" };
+            });
         }
 
         public static RouteCollection Routes { get; }

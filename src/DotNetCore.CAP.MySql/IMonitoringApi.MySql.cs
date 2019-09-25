@@ -32,7 +32,8 @@ set transaction isolation level read committed;
 select count(Id) from `{0}.published` where StatusName = N'Succeeded';
 select count(Id) from `{0}.received` where StatusName = N'Succeeded';
 select count(Id) from `{0}.published` where StatusName = N'Failed';
-select count(Id) from `{0}.received` where StatusName = N'Failed';", _prefix);
+select count(Id) from `{0}.received` where StatusName = N'Failed';
+select count(Id) from `{0}.webmessage`;", _prefix);
 
             var statistics = UseConnection(connection =>
             {
@@ -44,6 +45,8 @@ select count(Id) from `{0}.received` where StatusName = N'Failed';", _prefix);
 
                     stats.PublishedFailed = multi.ReadSingle<int>();
                     stats.ReceivedFailed = multi.ReadSingle<int>();
+
+                    stats.WebMessageCount = multi.ReadSingle<int>();
                 }
 
                 return stats;
@@ -123,12 +126,29 @@ select count(Id) from `{0}.received` where StatusName = N'Failed';", _prefix);
             return UseConnection(conn => GetNumberOfMessage(conn, "received", StatusName.Succeeded));
         }
 
-        private int GetNumberOfMessage(IDbConnection connection, string tableName, string statusName)
+        /// <summary>
+        /// 获取WEB消息数量
+        /// </summary>
+        /// <returns></returns>
+        public int WebMessageCount()
         {
-            var sqlQuery = $"select count(Id) from `{_prefix}.{tableName}` where StatusName = @state";
+            return UseConnection(conn => GetNumberOfMessage(conn, "webmessage"));
+        }
 
-            var count = connection.ExecuteScalar<int>(sqlQuery, new { state = statusName });
-            return count;
+        private int GetNumberOfMessage(IDbConnection connection, string tableName, string statusName="")
+        {
+            if (string.IsNullOrEmpty(statusName))
+            {
+                var sqlQuery = $"select count(Id) from `{_prefix}.{tableName}`";
+                var count = connection.ExecuteScalar<int>(sqlQuery, new { state = statusName });
+                return count;
+            }
+            else
+            {
+                var sqlQuery = $"select count(Id) from `{_prefix}.{tableName}` where StatusName = @state";
+                var count = connection.ExecuteScalar<int>(sqlQuery, new { state = statusName });
+                return count;
+            }
         }
 
         private T UseConnection<T>(Func<IDbConnection, T> action)

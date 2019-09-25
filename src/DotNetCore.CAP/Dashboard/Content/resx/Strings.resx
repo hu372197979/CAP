@@ -348,4 +348,46 @@
   <data name="LayoutPage_Footer_NodeCurrent" xml:space="preserve">
     <value>Node: {0}</value>
   </data>
+  <data name="WebMessage_Manage" xml:space="preserve">
+    <value>WebMessage</value>
+  </data>
+  <data name="Common_ApiUrl" xml:space="preserve">
+    <value>API</value>
+  </data>
+  <data name="Common_Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Common_Opt" xml:space="preserve">
+    <value>Operation</value>
+  </data>
+  <data name="WebMessage_NoData" xml:space="preserve">
+    <value>There are no config CAP webmessage.</value>
+  </data>
+  <data name="Common_Start" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="WebMessage_Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="WebMessage_Edit_Content" xml:space="preserve">
+    <value>Content</value>
+  </data>
+  <data name="WebMessage_Edit_Group" xml:space="preserve">
+    <value>Group</value>
+  </data>
+  <data name="WebMessage_Edit_Headers" xml:space="preserve">
+    <value>Headers</value>
+  </data>
+  <data name="WebMessage_Edit_Method" xml:space="preserve">
+    <value>Method</value>
+  </data>
+  <data name="WebMessage_Edit_Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="WebMessage_Edit_Url" xml:space="preserve">
+    <value>Url</value>
+  </data>
+  <data name="WebMessage_Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
 </root>

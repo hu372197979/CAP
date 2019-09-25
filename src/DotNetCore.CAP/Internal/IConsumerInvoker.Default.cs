@@ -30,7 +30,7 @@ namespace DotNetCore.CAP.Internal
             _logger = loggerFactory.CreateLogger<DefaultConsumerInvoker>();
         }
 
-        public async Task<ConsumerExecutedResult> InvokeAsync(ConsumerContext context, CancellationToken cancellationToken = default)
+        public async Task<ConsumerExecutedResult> InvokeAsync(ConsumerContext context, CancellationToken cancellationToken )
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -60,6 +60,12 @@ namespace DotNetCore.CAP.Internal
 
                 var jsonContent = context.DeliverMessage.Content;
                 var message = _messagePacker.UnPack(jsonContent);
+
+                //处理当为网络配置时增加读取配置功能完善请求参数再执行实际逻辑
+                if (obj is HttpHelper m)
+                {
+                    m.DeliverMessage = context.DeliverMessage;
+                }
 
                 object resultObj;
                 if (executor.MethodParameters.Length > 0)

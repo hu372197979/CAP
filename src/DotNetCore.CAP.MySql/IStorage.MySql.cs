@@ -84,6 +84,21 @@ CREATE TABLE IF NOT EXISTS `{prefix}.published` (
   `StatusName` varchar(40) NOT NULL,
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `{prefix}.webmessage` (
+  `Id` bigint NOT NULL,
+  `Version` varchar(20) DEFAULT NULL,
+  `Name` varchar(400) NOT NULL,
+  `Group` varchar(200) DEFAULT NULL,
+  `Url` varchar(200) DEFAULT NULL,
+  `Method` varchar(20) DEFAULT NULL,
+  `Headers` varchar(2000) DEFAULT NULL,
+  `Content` longtext,
+  `Edited` datetime NOT NULL,
+  `Added` datetime NOT NULL,
+  PRIMARY KEY (`Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 ";
             return batchSql;
         }

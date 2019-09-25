@@ -124,7 +124,10 @@ namespace DotNetCore.CAP.RabbitMQ
 
                 Debug.Assert(_count >= 0);
 
-                return model;
+                if (model.IsOpen)
+                {
+                    return model;
+                }
             }
 
             try

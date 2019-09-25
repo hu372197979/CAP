@@ -64,6 +64,9 @@ namespace Microsoft.Extensions.DependencyInjection
             // Warning: IPublishMessageSender need to inject at extension project. 
             services.TryAddSingleton<ISubscriberExecutor, DefaultSubscriberExecutor>();
 
+            //添加网络请求注入
+            services.AddScoped<HttpHelper>();
+
             //Options and extension service
             var options = new CapOptions();
             setupAction(options);

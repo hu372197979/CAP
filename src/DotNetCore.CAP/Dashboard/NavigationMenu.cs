@@ -44,6 +44,13 @@ namespace DotNetCore.CAP.Dashboard
                 Active = page.RequestPath.Equals("/nodes"),
                 Metric = DashboardMetrics.ServerCount
             });
+
+            //web ÏûÏ¢ÅäÖÃ
+            Items.Add(page => new MenuItem(Strings.WebMessage_Manage, page.Url.To("/webmessage"))
+            {
+                Active = page.RequestPath.Equals("/webmessage"),
+                Metric = DashboardMetrics.WebMessageCount
+            });
         }
     }
 }

@@ -33,7 +33,7 @@ namespace DotNetCore.CAP.Processor
             _cts = new CancellationTokenSource();
         }
 
-        public void Start()
+        public void Start(bool reload = false)
         {
             _logger.ServerStarting();
 

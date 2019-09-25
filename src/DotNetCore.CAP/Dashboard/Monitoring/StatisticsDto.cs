@@ -12,5 +12,10 @@ namespace DotNetCore.CAP.Dashboard.Monitoring
 
         public int PublishedFailed { get; set; }
         public int ReceivedFailed { get; set; }
+
+        /// <summary>
+        /// 网络消息数量
+        /// </summary>
+        public int WebMessageCount { get; set; }
     }
 }

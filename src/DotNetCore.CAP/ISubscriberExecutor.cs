@@ -12,6 +12,6 @@ namespace DotNetCore.CAP
     /// </summary>
     public interface ISubscriberExecutor
     {
-        Task<OperateResult> ExecuteAsync(CapReceivedMessage message, CancellationToken cancellationToken = default);
+        Task<OperateResult> ExecuteAsync(CapReceivedMessage message, CancellationToken cancellationToken );
     }
 }
